@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "conifer"
+version = "0.1.0"
+description = "Example authentication API"
+authors = ["Carlton Duffett <carlton.duffett@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+starlette = "^0.31.0"
+SQLAlchemy = "^2.0.19"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
