@@ -11,7 +11,7 @@ services:
       - "3000:3000"
     environment:
       - ENV=local
-      - CONIFER_DB_URL=postgresql://postgres@db/postgres
+      - CONIFER_DB_URL=postgresql://postgres@db/conifer
 
   # Replaced by a dedicated database server in production (e.g. AWS RDS)
   db:
@@ -19,7 +19,7 @@ services:
     expose:
       - "5432"
     ports:
-      # Use a non-default port to avoid conflicts on localhost
+      # Map to a non-default port to avoid conflicts on localhost
       - "15432:5432"
     environment:
       - POSTGRES_DB=conifer
