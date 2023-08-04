@@ -14,12 +14,11 @@ from .models import BaseModel
 engine = create_engine(os.environ["CONIFER_DB_URL"], echo=True)
 
 
-def init_db():
-    """Initialize database connection and models."""
+def create_tables():
+    """Create database tables based on current models."""
     
-    # Emit DDL statements to create tables based on current models. In production, replace
-    # with a database migration system like Alembic. Apply database changes independently
-    # from starting the application. See: https://alembic.sqlalchemy.org/en/latest/
+    # In production, replace this with a database migration system like Alembic. Apply database
+    # changes independently from starting the application. See: https://alembic.sqlalchemy.org/en/latest/
     BaseModel.metadata.create_all(engine)
 
 
