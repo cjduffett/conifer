@@ -26,7 +26,11 @@ def create_tables():
 def session():
     """Create a new database session, ensure the session is closed when finished."""
 
-    session = Session(engine)
+    # Allow models comitted by the session to retain their information in-memory after
+    # the session is closed, for example so you can reference model attributes. See:
+    # https://docs.sqlalchemy.org/en/20/errors.html#parent-instance-x-is-not-bound-to-a-session-lazy-load-deferred-load-refresh-etc-operation-cannot-proceed
+    session = Session(engine, expire_on_commit=False)
+
     try:
         yield session
     finally:
