@@ -50,7 +50,10 @@ class Login(HTTPEndpoint):
 
         # TODO: Create schemas for requests and responses, compatible with OpenAPI spec:
         # https://www.starlette.io/schemas/
-        return JSONResponse({
-            "session": session.uuid,
-            "expires_at": str(session.expires_at),
-        })
+        return JSONResponse(
+            {
+                "session": session.uuid,
+                "expires_at": session.expires_at.isoformat(),
+            },
+            status_code=HTTPStatus.CREATED  # 201
+        )
