@@ -12,7 +12,7 @@ from . import services
 class Health(HTTPEndpoint):
     """Health check endpoint."""
 
-    async def get(self):
+    async def get(self, request: Request):
         """Check server health/readiness."""
 
         return PlainTextResponse("OK")
@@ -26,12 +26,11 @@ class Account(HTTPEndpoint):
 
         params = await request.json()
 
-        # TODO: Validate params: valid email address? Password meets minimum criteria?
-        # Raise 400 error if client sent missing or invalid parameters.
+        # TODO: Handle missing or blank params that would cause a KeyError here
         email = params["email"]
         password = params["password"]
 
-        account = services.create_account(email, password)
+        services.create_account(email, password)
 
         return Response(status_code=HTTPStatus.CREATED)  # 201
 
@@ -44,13 +43,14 @@ class Login(HTTPEndpoint):
 
         params = await request.json()
 
-        # TODO: Validate params, raise 400 error for missing or invalid values
         email = params["email"]
         password = params["password"]
 
         session = services.login(email, password)
 
+        # TODO: Create schemas for requests and responses, compatible with OpenAPI spec:
+        # https://www.starlette.io/schemas/
         return JSONResponse({
             "session": session.uuid,
-            "expires_at": session.expires_at,
+            "expires_at": str(session.expires_at),
         })
