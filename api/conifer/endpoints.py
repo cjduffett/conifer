@@ -2,6 +2,7 @@
 
 from http import HTTPStatus
 
+from argon2 import PasswordHasher
 from starlette.endpoints import HTTPEndpoint
 from starlette.requests import Request
 from starlette.responses import Response, PlainTextResponse
@@ -26,12 +27,17 @@ class Account(HTTPEndpoint):
 
         params = await request.json()
 
+        # TODO: Validate params: valid email address? Password meets minimum criteria?
         email = params["email"]
-        password = params["password"]  # TODO: Salt + hash password, convert to bytes
+        password = params["password"]
 
+        # One-way hashing of password for secure storage
+        hasher = PasswordHasher()
+        hashed_password = hasher.hash(password)
+        
         account = models.Account(
             email=email,
-            password=password.encode("utf-8"),
+            password=hashed_password.encode("utf-8"),  # bytes
         )
 
         with db.session() as session:

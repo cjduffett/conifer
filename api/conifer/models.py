@@ -29,10 +29,8 @@ class Account(BaseModel):
     # email addresses, perhaps no email address at all (if SSO).
     email: Mapped[str] = mapped_column(unique=True)
 
-    # SHA256 is "good enough" for this example, but many other (possibly better) hashing
-    # alternatives are available for consideration. See:
-    # https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.180-4.pdf
-    # https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-132.pdf
+    # Guidelines for hasing, salting, peppering passwords:
+    # https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html
     password: Mapped[bytes] = mapped_column()
 
     # TODO: Track 'password_set_at', 'last_login', login attempts, password history; other
