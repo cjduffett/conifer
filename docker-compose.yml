@@ -13,6 +13,11 @@ services:
     environment:
       - ENV=local
       - CONIFER_DB_URL=postgresql://postgres@db/conifer
+      # Force the stdout and stderr streams to be unbuffered
+      - PYTHONUNBUFFERED=1
+    volumes:
+      # Mount python source code to minimize need for re-building during development
+      - ./api/conifer:/home/conifer/conifer
 
   # Replaced by a dedicated database server in production (e.g. AWS RDS)
   db:
