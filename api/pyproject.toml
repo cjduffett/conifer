@@ -10,6 +10,7 @@ starlette = "^0.31.0"
 SQLAlchemy = "^2.0.19"
 uvicorn = "^0.23.2"
 psycopg2 = "^2.9.6"
+argon2-cffi = "^21.3.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.0"
