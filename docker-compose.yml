@@ -1,5 +1,4 @@
 version: "3"
-
 services:
   api:
     build: ./api
@@ -13,7 +12,7 @@ services:
     environment:
       - ENV=local
       - CONIFER_DB_URL=postgresql://postgres@db/conifer
-      # Force the stdout and stderr streams to be unbuffered
+      # Force the Python stdout and stderr streams to be unbuffered
       - PYTHONUNBUFFERED=1
     volumes:
       # Mount python source code to minimize need for re-building during development
@@ -22,11 +21,9 @@ services:
   # Replaced by a dedicated database server in production (e.g. AWS RDS)
   db:
     image: postgres:14.8
-    expose:
-      - "5432"
-    ports:
-      # Map to a non-default port to avoid conflicts on localhost
-      - "15432:5432"
     environment:
       - POSTGRES_DB=conifer
+      # For development, if you can reach the database host you can connect to it. Only the
+      # 'api' container should be able to reach this db over the default bridge network.
+      # Replaced by a secure username and password in production.
       - POSTGRES_HOST_AUTH_METHOD=trust

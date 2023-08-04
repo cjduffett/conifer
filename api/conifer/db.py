@@ -10,7 +10,7 @@ from .models import BaseModel
 
 
 # Factory for creating new database connections, manages the connection pool for us.
-# echo=True logs all SQL emitted by the ORM for debugging. Disable in production.
+# echo=True logs all SQL emitted by the ORM for debugging. Disable echo in production.
 engine = create_engine(os.environ["CONIFER_DB_URL"], echo=True)
 
 

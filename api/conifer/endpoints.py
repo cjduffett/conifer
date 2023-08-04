@@ -19,7 +19,7 @@ class Health(HTTPEndpoint):
 
 
 class Account(HTTPEndpoint):
-    """Account endpoints."""
+    """Account endpoint."""
 
     async def post(self, request: Request):
         """Create a new account."""
@@ -36,7 +36,7 @@ class Account(HTTPEndpoint):
 
 
 class Login(HTTPEndpoint):
-    """Login endpoints."""
+    """Login endpoint."""
 
     async def post(self, request: Request):
         """Login to an existing account and establish a session."""

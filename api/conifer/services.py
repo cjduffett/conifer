@@ -30,6 +30,7 @@ def create_account(email: str, password: str) -> models.Account:
         password=hashed_password.encode("utf-8"),  # bytes
     )
 
+    # TODO: Handle integrity error if an account with that email already exists
     with db.session() as db_session:
         db_session.add(account)
         db_session.commit()
