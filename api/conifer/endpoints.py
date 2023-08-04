@@ -1,29 +1,44 @@
 """Authentication API endpoints."""
 
+from http import HTTPStatus
+
 from starlette.endpoints import HTTPEndpoint
-from starlette.responses import PlainTextResponse
+from starlette.requests import Request
+from starlette.responses import Response, PlainTextResponse
+
+from . import db, models
 
 
 class Health(HTTPEndpoint):
     """Health check endpoint."""
 
-    async def get(self, request):
+    async def get(self):
         """Check server health/readiness."""
+
         return PlainTextResponse("OK")
 
 
 class Account(HTTPEndpoint):
     """Account endpoints."""
 
-    async def get(self, request):
-        """Get account by ID."""
-
-        # TODO: Query for existing Account
-
-    async def post(self, request):
+    async def post(self, request: Request):
         """Create a new account."""
 
-        # TODO: Insert new Account
+        params = await request.json()
+
+        email = params["email"]
+        password = params["password"]  # TODO: Salt + hash password, convert to bytes
+
+        account = models.Account(
+            email=email,
+            password=password.encode("utf-8"),
+        )
+
+        with db.session() as session:
+            session.add(account)
+            session.commit()
+
+        return Response(status_code=HTTPStatus.CREATED)  # 201
 
 
 class Login(HTTPEndpoint):
@@ -33,3 +48,4 @@ class Login(HTTPEndpoint):
         """Login to an existing account and establish a session."""
 
         # TODO: Insert new Session
+        return PlainTextResponse("Session(abc123)")
