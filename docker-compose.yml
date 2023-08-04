@@ -3,12 +3,13 @@ version: "3"
 services:
   api:
     build: ./api
+    command: run
     links:
       - db
     expose:
-      - "3000"
+      - "8000"
     ports:
-      - "3000:3000"
+      - "8000:8000"
     environment:
       - ENV=local
       - CONIFER_DB_URL=postgresql://postgres@db/conifer
