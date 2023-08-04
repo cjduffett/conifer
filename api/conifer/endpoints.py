@@ -2,12 +2,11 @@
 
 from http import HTTPStatus
 
-from argon2 import PasswordHasher
 from starlette.endpoints import HTTPEndpoint
 from starlette.requests import Request
-from starlette.responses import Response, PlainTextResponse
+from starlette.responses import Response, PlainTextResponse, JSONResponse
 
-from . import db, models
+from . import services
 
 
 class Health(HTTPEndpoint):
@@ -28,21 +27,11 @@ class Account(HTTPEndpoint):
         params = await request.json()
 
         # TODO: Validate params: valid email address? Password meets minimum criteria?
+        # Raise 400 error if client sent missing or invalid parameters.
         email = params["email"]
         password = params["password"]
 
-        # One-way hashing of password for secure storage
-        hasher = PasswordHasher()
-        hashed_password = hasher.hash(password)
-        
-        account = models.Account(
-            email=email,
-            password=hashed_password.encode("utf-8"),  # bytes
-        )
-
-        with db.session() as session:
-            session.add(account)
-            session.commit()
+        account = services.create_account(email, password)
 
         return Response(status_code=HTTPStatus.CREATED)  # 201
 
@@ -50,8 +39,18 @@ class Account(HTTPEndpoint):
 class Login(HTTPEndpoint):
     """Login endpoints."""
 
-    async def post(self, request):
+    async def post(self, request: Request):
         """Login to an existing account and establish a session."""
 
-        # TODO: Insert new Session
-        return PlainTextResponse("Session(abc123)")
+        params = await request.json()
+
+        # TODO: Validate params, raise 400 error for missing or invalid values
+        email = params["email"]
+        password = params["password"]
+
+        session = services.login(email, password)
+
+        return JSONResponse({
+            "session": session.uuid,
+            "expires_at": session.expires_at,
+        })
