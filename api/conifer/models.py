@@ -4,7 +4,7 @@ from datetime import datetime
 from uuid import UUID
 
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 class BaseModel(DeclarativeBase):
@@ -29,7 +29,7 @@ class Account(BaseModel):
     # email addresses, perhaps no email address at all (if SSO).
     email: Mapped[str] = mapped_column(unique=True)
 
-    # Guidelines for hasing, salting, peppering passwords:
+    # Guidelines for hashing, salting, peppering passwords:
     # https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html
     password: Mapped[bytes] = mapped_column()
 
@@ -48,13 +48,17 @@ class Session(BaseModel):
 
     __tablename__ = "session"
 
-    # Unique session ID can be sent in 'Authorization' header or used in URLs, for example:
-    # GET /api/v1/<session>/account
+    # Unique session ID can be sent in 'Authorization' header or used in URLs for all
+    # authenticated endpoints, for example: GET /api/v1/<session>/account
     uuid: Mapped[UUID] = mapped_column(primary_key=True)
 
     # Current design allows for multiple active sessions per-account (e.g desktop + mobile).
     # Also allows us to track session history over time, query an Account's previous sessions.
     account_id: Mapped[int] = mapped_column(ForeignKey("account.id"))
+
+    # ORM relationships for convenience, see:
+    # https://docs.sqlalchemy.org/en/20/orm/basic_relationships.html
+    account: Mapped[Account] = relationship("Account")
 
     # Timestamps are in UTC
     created_at: Mapped[datetime] = mapped_column()
