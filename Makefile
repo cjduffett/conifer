@@ -10,3 +10,7 @@ shell:
 clean:
 	docker compose ${COMPOSE_ARGS} down -v --remove-orphans
 	docker compose ${COMPOSE_ARGS} rm -f
+	rm -rf conifer/.venv
+
+run: clean
+	docker compose ${COMPOSE_ARGS} up
