@@ -6,7 +6,9 @@ from typing import Optional
 from uuid import uuid4
 
 from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from starlette.exceptions import HTTPException
 
 from . import db, models
@@ -31,9 +33,13 @@ def create_account(email: str, password: str) -> models.Account:
     )
 
     # TODO: Handle integrity error if an account with that email already exists
-    with db.session() as db_session:
-        db_session.add(account)
-        db_session.commit()
+    try:
+        with db.session() as db_session:
+            db_session.add(account)
+            db_session.commit()
+    except IntegrityError:
+        # Account with that email already exists
+        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail="Account with that email already exists")
 
     # TODO: Send "Account created" email confirmation
     return account
@@ -61,7 +67,11 @@ def login(email: str, password: str) -> models.Session:
     
     # Compare passwords
     hasher = PasswordHasher()
-    match = hasher.verify(account.password, password)
+
+    try:
+        match = hasher.verify(account.password, password)
+    except VerifyMismatchError:
+        match = False
 
     if not match:
         raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail="Invalid email or password")
